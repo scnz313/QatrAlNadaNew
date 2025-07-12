@@ -18,7 +18,7 @@ dependencies:
   font_awesome_flutter: ^10.8.0
 
 dev_dependencies:
-  flutter_launcher_icons: ^0.13.1
+  # flutter_launcher_icons: ^0.13.1
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.2
@@ -27,6 +27,7 @@ flutter:
   assets:
    - assets/data.json
    - assets/img/
+   - assets/icons/
   fonts:
     - family: Noto
       fonts:
@@ -52,7 +53,7 @@ flutter_native_splash:
   fullscreen: true  # Optional: To make the splash fullscreen
 
 
-flutter_launcher_icons:
-  android: true
-  ios: false
-  image_path: "assets/img/icon.png"
+# flutter_launcher_icons:
+#   android: true
+#   ios: false
+#   image_path: "assets/img/icon.png"

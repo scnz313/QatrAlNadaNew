@@ -16,41 +16,60 @@ dependencies:
     sdk: flutter
   url_launcher: ^6.3.0
   font_awesome_flutter: ^10.8.0
+  # Animation and UI enhancements
+  animations: ^2.0.11
+  flutter_animate: ^4.5.0
+  shimmer: ^3.0.0
+  google_fonts: ^6.2.1
+  flutter_staggered_animations: ^1.1.1
+  # UI Components
+  card_swiper: ^3.0.1
+  smooth_page_indicator: ^1.2.0
+  flutter_svg: ^2.0.10
+  # State Management
+  provider: ^6.1.2
+  # Utilities
+  cached_network_image: ^3.4.0
+  flutter_screenutil: ^5.9.3
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.2
+
 flutter:
   uses-material-design: true
   assets:
    - assets/data.json
    - assets/img/
+   - assets/icons/
   fonts:
     - family: Noto
       fonts:
         - asset: assets/fonts/arabic.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
     - family: Amiri
       fonts:
         - asset: assets/fonts/Amiri.ttf
     - family: Noor
       fonts:
         - asset: assets/fonts/noorehira.ttf
-  
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
+    # Adding Airbnb-style fonts
+    - family: Circular
+      fonts:
+        - asset: assets/fonts/circular-regular.ttf
+        - asset: assets/fonts/circular-medium.ttf
+          weight: 500
+        - asset: assets/fonts/circular-bold.ttf
+          weight: 700
 
 flutter_native_splash:
-  color: "#B89B72"  # Background color of splash screen
-  image: assets/img/head_drawer.png  # Path to your splash logo image
+  color: "#FFFFFF"  # Clean white background like Airbnb
+  image: assets/img/splash_logo.png  # Will create a new modern logo
   android: true
   ios: true
   web: false
-  fullscreen: true  # Optional: To make the splash fullscreen
-
+  fullscreen: true
 
 flutter_launcher_icons:
   android: true

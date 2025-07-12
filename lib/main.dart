@@ -5,7 +5,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:card_swiper/card_swiper.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'theme/airbnb_theme.dart';
@@ -24,16 +23,16 @@ void main() {
 }
 
 class AppState extends ChangeNotifier {
-  double fontSize = 20.0;
   String currentFont = 'Noto';
-  
-  void updateFontSize(double size) {
-    fontSize = size;
-    notifyListeners();
-  }
+  String currentTheme = 'Light';
   
   void updateFont(String font) {
     currentFont = font;
+    notifyListeners();
+  }
+  
+  void updateTheme(String theme) {
+    currentTheme = theme;
     notifyListeners();
   }
 }
@@ -48,10 +47,31 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: AirbnbTheme.lightTheme,
-          home: const HomePage(),
+        return Consumer<AppState>(
+          builder: (context, appState, child) {
+            ThemeData theme;
+            switch (appState.currentTheme) {
+              case 'Dark':
+                theme = AirbnbTheme.darkTheme;
+                break;
+              case 'Sepia':
+                theme = AirbnbTheme.sepiaTheme;
+                break;
+              case 'Auto':
+                // For auto, we'll use light theme for now
+                // You can implement system theme detection here
+                theme = AirbnbTheme.lightTheme;
+                break;
+              default:
+                theme = AirbnbTheme.lightTheme;
+            }
+            
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: theme,
+              home: const HomePage(),
+            );
+          },
         );
       },
     );
@@ -68,8 +88,6 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   List<dynamic> data = [];
   int currentIndex = 0;
-  final double minFontSize = 10.0;
-  final double maxFontSize = 30.0;
   final List<String> fontOptions = ['Noto', 'Noor', 'Amiri'];
   
   late AnimationController _pageController;
@@ -102,7 +120,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
   
   Future<void> loadJsonData() async {
-    await Future.delayed(const Duration(milliseconds: 500));
     String jsonString = await rootBundle.loadString('assets/data.json');
     setState(() {
       data = json.decode(jsonString);
@@ -111,22 +128,14 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _pageController.forward();
   }
   
-  void increaseFontSize() {
-    final appState = Provider.of<AppState>(context, listen: false);
-    if (appState.fontSize < maxFontSize) {
-      appState.updateFontSize(appState.fontSize + 2.0);
-    }
-  }
-  
-  void decreaseFontSize() {
-    final appState = Provider.of<AppState>(context, listen: false);
-    if (appState.fontSize > minFontSize) {
-      appState.updateFontSize(appState.fontSize - 2.0);
-    }
-  }
+
   
   void changeFont(String font) {
     Provider.of<AppState>(context, listen: false).updateFont(font);
+  }
+  
+  void changeTheme(String theme) {
+    Provider.of<AppState>(context, listen: false).updateTheme(theme);
   }
   
   void navigateToPage(int index) {
@@ -144,10 +153,11 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context);
+    final theme = Theme.of(context);
     
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: AirbnbTheme.backgroundLight,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -155,10 +165,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               decoration: BoxDecoration(
-                color: AirbnbTheme.surfaceWhite,
+                color: theme.colorScheme.surface,
                 boxShadow: [
                   BoxShadow(
-                    color: AirbnbTheme.shadowLight,
+                    color: theme.colorScheme.onSurface.withOpacity(0.1),
                     offset: const Offset(0, 1),
                     blurRadius: 3,
                   ),
@@ -170,16 +180,20 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     icon: Icons.menu_rounded,
                     onPressed: () => _scaffoldKey.currentState?.openDrawer(),
                     showBackground: false,
+                    color: theme.colorScheme.onSurface,
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
                       'شرح قطرالندى',
-                      style: AirbnbTheme.textTheme.headlineMedium?.copyWith(
+                      style: theme.textTheme.headlineMedium?.copyWith(
                         fontFamily: 'Noto',
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onSurface,
                       ),
                       textAlign: TextAlign.center,
                       textDirection: TextDirection.rtl,
+                      overflow: TextOverflow.ellipsis,
                     ).animate()
                         .fadeIn(duration: 600.ms)
                         .slideX(begin: 0.1, end: 0),
@@ -189,6 +203,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     icon: Icons.library_books_rounded,
                     onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
                     showBackground: false,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ],
               ),
@@ -208,8 +223,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
       drawer: AirbnbDrawer(
         onFontChanged: changeFont,
         currentFont: appState.currentFont,
-        onIncreaseFontSize: increaseFontSize,
-        onDecreaseFontSize: decreaseFontSize,
         onAboutPressed: () {
           Navigator.push(
             context,
@@ -236,14 +249,18 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             await launchUrl(url);
           }
         },
+        onThemeChanged: (theme) {
+          Provider.of<AppState>(context, listen: false).updateTheme(theme);
+        },
+        currentTheme: appState.currentTheme,
         fontOptions: fontOptions,
       ),
       endDrawer: _buildChaptersDrawer(),
-      floatingActionButton: _buildFloatingButtons(),
     );
   }
   
   Widget _buildLoadingState() {
+    final theme = Theme.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -252,23 +269,23 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: AirbnbTheme.gray100,
+              color: theme.colorScheme.surface,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.menu_book_rounded,
               size: 50,
-              color: AirbnbTheme.gray400,
+              color: theme.colorScheme.onSurface.withOpacity(0.5),
             ),
           ).animate(onPlay: (controller) => controller.repeat())
-              .shimmer(duration: 1500.ms, color: AirbnbTheme.gray200)
+              .shimmer(duration: 1500.ms, color: theme.colorScheme.onSurface.withOpacity(0.2))
               .animate()
               .fadeIn(duration: 300.ms),
           const SizedBox(height: 24),
           Text(
             'Loading content...',
-            style: AirbnbTheme.textTheme.bodyLarge?.copyWith(
-              color: AirbnbTheme.gray500,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurface.withOpacity(0.7),
             ),
           ).animate()
               .fadeIn(delay: 200.ms, duration: 300.ms),
@@ -278,29 +295,40 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
   
   Widget _buildContent(AppState appState) {
+    final theme = Theme.of(context);
     return Column(
       children: [
         // Page Indicator
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Chapter ${currentIndex + 1} of ${data.length}',
-                style: AirbnbTheme.textTheme.bodyMedium?.copyWith(
-                  color: AirbnbTheme.gray600,
+              Expanded(
+                flex: 3,
+                child: Text(
+                  'Chapter ${currentIndex + 1} of ${data.length}',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              SmoothPageIndicator(
-                controller: _swipeController,
-                count: data.length,
-                effect: WormEffect(
-                  dotWidth: 8,
-                  dotHeight: 8,
-                  spacing: 4,
-                  activeDotColor: AirbnbTheme.primaryRed,
-                  dotColor: AirbnbTheme.gray300,
+              const SizedBox(width: 8),
+              Flexible(
+                flex: 1,
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  child: SmoothPageIndicator(
+                    controller: _swipeController,
+                    count: data.length,
+                    effect: WormEffect(
+                      dotWidth: 5,
+                      dotHeight: 5,
+                      spacing: 2,
+                      activeDotColor: theme.colorScheme.primary,
+                      dotColor: theme.colorScheme.onSurface.withOpacity(0.3),
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -338,20 +366,27 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 vertical: 8,
                               ),
                               decoration: BoxDecoration(
-                                color: AirbnbTheme.primaryRed.withOpacity(0.1),
+                                color: theme.brightness == Brightness.dark
+                                    ? theme.colorScheme.primary.withOpacity(0.2)
+                                    : theme.colorScheme.primary.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(
                                   AirbnbTheme.radiusRound,
                                 ),
                               ),
                               child: Text(
                                 data[index]['title'] ?? 'ﻻ يوجد شي',
-                                style: AirbnbTheme.arabicTextTheme.displayMedium?.copyWith(
-                                  color: AirbnbTheme.primaryRed,
+                                style: theme.textTheme.headlineMedium?.copyWith(
+                                  color: theme.brightness == Brightness.dark
+                                      ? theme.colorScheme.onPrimary
+                                      : theme.colorScheme.primary,
                                   fontSize: 24,
                                   fontWeight: FontWeight.w700,
+                                  fontFamily: 'Noto',
                                 ),
                                 textAlign: TextAlign.center,
                                 textDirection: TextDirection.rtl,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
                               ),
                             ).animate()
                                 .fadeIn(delay: 300.ms, duration: 400.ms)
@@ -367,13 +402,14 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   child: Text(
                                     data[index]['content'] ?? 'لا يوجد شئ',
                                     style: TextStyle(
-                                      fontSize: appState.fontSize,
-                                      color: AirbnbTheme.gray700,
+                                      fontSize: 18,
+                                      color: theme.colorScheme.onSurface,
                                       height: 2,
                                       fontFamily: appState.currentFont,
                                     ),
-                                    textAlign: TextAlign.center,
+                                    textAlign: TextAlign.justify,
                                     textDirection: TextDirection.rtl,
+                                    softWrap: true,
                                   ).animate()
                                       .fadeIn(delay: 400.ms, duration: 500.ms),
                                 ),
@@ -389,13 +425,13 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   Icon(
                                     Icons.swipe_rounded,
                                     size: 20,
-                                    color: AirbnbTheme.gray400,
+                                    color: theme.colorScheme.onSurface.withOpacity(0.5),
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
                                     'Swipe to navigate',
-                                    style: AirbnbTheme.textTheme.bodySmall?.copyWith(
-                                      color: AirbnbTheme.gray400,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: theme.colorScheme.onSurface.withOpacity(0.5),
                                     ),
                                   ),
                                 ],
@@ -417,15 +453,16 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
   
   Widget _buildChaptersDrawer() {
+    final theme = Theme.of(context);
     return Drawer(
-      backgroundColor: AirbnbTheme.surfaceWhite,
+      backgroundColor: theme.colorScheme.surface,
       child: SafeArea(
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AirbnbTheme.gray100,
+                color: theme.colorScheme.surface,
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(AirbnbTheme.radiusXLarge),
                   bottomRight: Radius.circular(AirbnbTheme.radiusXLarge),
@@ -433,15 +470,17 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
               child: Column(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.library_books_rounded,
                     size: 48,
-                    color: AirbnbTheme.primaryRed,
+                    color: theme.colorScheme.primary,
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'Chapters',
-                    style: AirbnbTheme.textTheme.headlineLarge,
+                    style: theme.textTheme.headlineLarge?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                    ),
                   ),
                 ],
               ),
@@ -465,7 +504,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? AirbnbTheme.primaryRed.withOpacity(0.1)
+                                ? theme.colorScheme.primary.withOpacity(0.1)
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(
                               AirbnbTheme.radiusSmall,
@@ -478,8 +517,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               height: 32,
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? AirbnbTheme.primaryRed
-                                    : AirbnbTheme.gray200,
+                                    ? theme.colorScheme.primary
+                                    : theme.colorScheme.onSurface.withOpacity(0.2),
                                 shape: BoxShape.circle,
                               ),
                               child: Center(
@@ -487,8 +526,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   '${index + 1}',
                                   style: TextStyle(
                                     color: isSelected
-                                        ? AirbnbTheme.primaryWhite
-                                        : AirbnbTheme.gray600,
+                                        ? theme.colorScheme.onPrimary
+                                        : theme.colorScheme.onSurface.withOpacity(0.7),
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -497,11 +536,11 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             ),
                             title: Text(
                               data[index]['title'] ?? '',
-                              style: AirbnbTheme.textTheme.bodyLarge?.copyWith(
+                              style: theme.textTheme.bodyLarge?.copyWith(
                                 fontFamily: 'Noto',
                                 color: isSelected
-                                    ? AirbnbTheme.primaryRed
-                                    : AirbnbTheme.primaryDark,
+                                    ? theme.colorScheme.primary
+                                    : theme.colorScheme.onSurface,
                                 fontWeight: isSelected
                                     ? FontWeight.w600
                                     : FontWeight.w400,
@@ -510,10 +549,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               textDirection: TextDirection.rtl,
                             ),
                             trailing: isSelected
-                                ? const Icon(
+                                ? Icon(
                                     Icons.arrow_forward_ios_rounded,
                                     size: 16,
-                                    color: AirbnbTheme.primaryRed,
+                                    color: theme.colorScheme.primary,
                                   )
                                 : null,
                           ),
@@ -530,21 +569,5 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
   
-  Widget _buildFloatingButtons() {
-    return AirbnbFloatingMenu(
-      mainIcon: Icons.text_fields_rounded,
-      items: [
-        AirbnbFloatingMenuItem(
-          icon: Icons.remove_rounded,
-          label: 'Smaller',
-          onTap: decreaseFontSize,
-        ),
-        AirbnbFloatingMenuItem(
-          icon: Icons.add_rounded,
-          label: 'Larger',
-          onTap: increaseFontSize,
-        ),
-      ],
-    );
-  }
+
 }

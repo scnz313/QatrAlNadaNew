@@ -6,7 +6,7 @@ description: |
   It also includes quick access to essential features like increasing or decreasing the font size and viewing a privacy policy. 
   Ideal for anyone seeking to learn more about classical Arabic literature in a convenient and accessible format.
 
-version: 2.0.0+2
+version: 2.0.1+6
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -14,7 +14,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  cupertino_icons: ^1.0.8
   url_launcher: ^6.3.0
+  path_provider: ^2.1.2
+  sqflite: ^2.3.2
   font_awesome_flutter: ^10.8.0
   # Animation and UI enhancements
   animations: ^2.0.11
@@ -43,7 +46,6 @@ flutter:
   assets:
    - assets/data.json
    - assets/img/
-   - assets/icons/
   fonts:
     - family: Noto
       fonts:
@@ -55,13 +57,13 @@ flutter:
       fonts:
         - asset: assets/fonts/noorehira.ttf
     # Adding Airbnb-style fonts
-    - family: Circular
-      fonts:
-        - asset: assets/fonts/circular-regular.ttf
-        - asset: assets/fonts/circular-medium.ttf
-          weight: 500
-        - asset: assets/fonts/circular-bold.ttf
-          weight: 700
+    # - family: Circular
+    #   fonts:
+    #     - asset: assets/fonts/circular-regular.ttf
+    #     - asset: assets/fonts/circular-medium.ttf
+    #       weight: 500
+    #     - asset: assets/fonts/circular-bold.ttf
+    #       weight: 700
 
 flutter_native_splash:
   color: "#FFFFFF"  # Clean white background like Airbnb
@@ -73,5 +75,5 @@ flutter_native_splash:
 
 flutter_launcher_icons:
   android: true
-  ios: false
+  ios: true
   image_path: "assets/img/icon.png"

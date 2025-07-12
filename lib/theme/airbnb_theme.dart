@@ -164,26 +164,26 @@ class AirbnbTheme {
   }
   
   // Box Shadows
-  static List<BoxShadow> get lightShadow => [
+  static List<BoxShadow> get lightShadow => const [
     BoxShadow(
       color: shadowLight,
-      offset: const Offset(0, 2),
+      offset: Offset(0, 2),
       blurRadius: 8,
     ),
   ];
   
-  static List<BoxShadow> get mediumShadow => [
+  static List<BoxShadow> get mediumShadow => const [
     BoxShadow(
       color: shadowMedium,
-      offset: const Offset(0, 4),
+      offset: Offset(0, 4),
       blurRadius: 16,
     ),
   ];
   
-  static List<BoxShadow> get heavyShadow => [
+  static List<BoxShadow> get heavyShadow => const [
     BoxShadow(
       color: shadowDark,
-      offset: const Offset(0, 8),
+      offset: Offset(0, 8),
       blurRadius: 24,
     ),
   ];
@@ -289,14 +289,14 @@ class AirbnbTheme {
         ),
       ),
       
-      cardTheme: CardTheme(
+      cardTheme: const CardThemeData(
         color: surfaceWhite,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusMedium),
-          side: const BorderSide(color: gray200, width: 1),
+          borderRadius: BorderRadius.all(Radius.circular(radiusMedium)),
+          side: BorderSide(color: gray200, width: 1),
         ),
-        margin: const EdgeInsets.all(0),
+        margin: EdgeInsets.all(0),
       ),
       
       iconTheme: const IconThemeData(
@@ -322,6 +322,215 @@ class AirbnbTheme {
       
       drawerTheme: const DrawerThemeData(
         backgroundColor: surfaceWhite,
+        elevation: 0,
+        width: 280,
+      ),
+    );
+  }
+  
+  static ThemeData get darkTheme {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      primaryColor: primaryRed,
+      scaffoldBackgroundColor: const Color(0xFF121212),
+      
+      colorScheme: const ColorScheme.dark(
+        primary: primaryRed,
+        onPrimary: primaryWhite,
+        secondary: primaryDark,
+        onSecondary: primaryWhite,
+        surface: Color(0xFF1E1E1E),
+        onSurface: primaryWhite,
+        error: primaryRed,
+        onError: primaryWhite,
+        background: Color(0xFF121212),
+      ),
+      
+      textTheme: textTheme.copyWith(
+        bodyLarge: textTheme.bodyLarge?.copyWith(color: primaryWhite),
+        bodyMedium: textTheme.bodyMedium?.copyWith(color: primaryWhite),
+        headlineLarge: textTheme.headlineLarge?.copyWith(color: primaryWhite),
+        headlineMedium: textTheme.headlineMedium?.copyWith(color: primaryWhite),
+        titleLarge: textTheme.titleLarge?.copyWith(color: primaryWhite),
+        titleMedium: textTheme.titleMedium?.copyWith(color: primaryWhite),
+      ),
+      
+      appBarTheme: AppBarTheme(
+        backgroundColor: const Color(0xFF1E1E1E),
+        foregroundColor: primaryWhite,
+        elevation: 0,
+        centerTitle: false,
+        titleTextStyle: textTheme.headlineMedium?.copyWith(color: primaryWhite),
+        toolbarHeight: 64,
+        scrolledUnderElevation: 1,
+        shadowColor: Colors.black,
+      ),
+      
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primaryRed,
+          foregroundColor: primaryWhite,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          minimumSize: const Size(48, 48),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radiusSmall),
+          ),
+          textStyle: textTheme.labelLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: primaryWhite,
+          ),
+        ),
+      ),
+      
+      cardTheme: const CardThemeData(
+        color: Color(0xFF1E1E1E),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(radiusMedium)),
+          side: BorderSide(color: Color(0xFF333333), width: 1),
+        ),
+        margin: EdgeInsets.all(0),
+      ),
+      
+      iconTheme: const IconThemeData(
+        color: primaryWhite,
+        size: 24,
+      ),
+      
+      dividerTheme: const DividerThemeData(
+        color: Color(0xFF333333),
+        thickness: 1,
+        space: 0,
+      ),
+      
+      drawerTheme: const DrawerThemeData(
+        backgroundColor: Color(0xFF1E1E1E),
+        elevation: 0,
+        width: 280,
+      ),
+    );
+  }
+  
+  static ThemeData get sepiaTheme {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+      primaryColor: const Color(0xFF8B4513), // Saddle Brown
+      scaffoldBackgroundColor: const Color(0xFFFDF5E6), // Old Lace
+      
+      colorScheme: const ColorScheme.light(
+        primary: Color(0xFF8B4513), // Saddle Brown
+        onPrimary: Color(0xFFFDF5E6), // Old Lace
+        secondary: Color(0xFFD2691E), // Chocolate
+        onSecondary: Color(0xFFFDF5E6), // Old Lace
+        surface: Color(0xFFFAEBD7), // Antique White
+        onSurface: Color(0xFF2F1B14), // Dark Brown
+        error: Color(0xFFCD5C5C), // Indian Red
+        onError: Color(0xFFFDF5E6), // Old Lace
+        background: Color(0xFFFDF5E6), // Old Lace
+      ),
+      
+      textTheme: textTheme.copyWith(
+        bodyLarge: textTheme.bodyLarge?.copyWith(
+          color: const Color(0xFF2F1B14), // Dark Brown
+          fontFamily: 'Georgia',
+        ),
+        bodyMedium: textTheme.bodyMedium?.copyWith(
+          color: const Color(0xFF2F1B14), // Dark Brown
+          fontFamily: 'Georgia',
+        ),
+        headlineLarge: textTheme.headlineLarge?.copyWith(
+          color: const Color(0xFF8B4513), // Saddle Brown
+          fontFamily: 'Georgia',
+        ),
+        headlineMedium: textTheme.headlineMedium?.copyWith(
+          color: const Color(0xFF8B4513), // Saddle Brown
+          fontFamily: 'Georgia',
+        ),
+        titleLarge: textTheme.titleLarge?.copyWith(
+          color: const Color(0xFF8B4513), // Saddle Brown
+          fontFamily: 'Georgia',
+        ),
+        titleMedium: textTheme.titleMedium?.copyWith(
+          color: const Color(0xFF8B4513), // Saddle Brown
+          fontFamily: 'Georgia',
+        ),
+      ),
+      
+      appBarTheme: AppBarTheme(
+        backgroundColor: const Color(0xFFFAEBD7), // Antique White
+        foregroundColor: const Color(0xFF8B4513), // Saddle Brown
+        elevation: 0,
+        centerTitle: false,
+        titleTextStyle: textTheme.headlineMedium?.copyWith(
+          color: const Color(0xFF8B4513), // Saddle Brown
+          fontFamily: 'Georgia',
+        ),
+        toolbarHeight: 64,
+        scrolledUnderElevation: 1,
+        shadowColor: const Color(0x1A8B4513),
+      ),
+      
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF8B4513), // Saddle Brown
+          foregroundColor: const Color(0xFFFDF5E6), // Old Lace
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          minimumSize: const Size(48, 48),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radiusSmall),
+          ),
+          textStyle: textTheme.labelLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFFFDF5E6), // Old Lace
+            fontFamily: 'Georgia',
+          ),
+        ),
+      ),
+      
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: const Color(0xFF8B4513), // Saddle Brown
+          side: const BorderSide(color: Color(0xFFD2691E), width: 1), // Chocolate
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          minimumSize: const Size(48, 48),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radiusSmall),
+          ),
+          textStyle: textTheme.labelLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF8B4513), // Saddle Brown
+            fontFamily: 'Georgia',
+          ),
+        ),
+      ),
+      
+      cardTheme: const CardThemeData(
+        color: Color(0xFFFAEBD7), // Antique White
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(radiusMedium)),
+          side: BorderSide(color: Color(0xFFDEB887), width: 1), // Burlywood
+        ),
+        margin: EdgeInsets.all(0),
+      ),
+      
+      iconTheme: const IconThemeData(
+        color: Color(0xFF8B4513), // Saddle Brown
+        size: 24,
+      ),
+      
+      dividerTheme: const DividerThemeData(
+        color: Color(0xFFDEB887), // Burlywood
+        thickness: 1,
+        space: 0,
+      ),
+      
+      drawerTheme: const DrawerThemeData(
+        backgroundColor: Color(0xFFFAEBD7), // Antique White
         elevation: 0,
         width: 280,
       ),

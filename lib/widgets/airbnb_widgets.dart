@@ -120,6 +120,7 @@ class AirbnbCard extends StatefulWidget {
   final EdgeInsets? margin;
   final bool showShadow;
   final double? borderRadius;
+  final double borderWidth;
   
   const AirbnbCard({
     Key? key,
@@ -129,6 +130,7 @@ class AirbnbCard extends StatefulWidget {
     this.margin,
     this.showShadow = true,
     this.borderRadius,
+    this.borderWidth = 1.0,
   }) : super(key: key);
   
   @override
@@ -151,13 +153,13 @@ class _AirbnbCardState extends State<AirbnbCard> {
           ..scale(_isHovered ? 0.98 : 1.0),
         margin: widget.margin,
         decoration: BoxDecoration(
-          color: AirbnbTheme.surfaceWhite,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(
             widget.borderRadius ?? AirbnbTheme.radiusLarge,
           ),
           border: Border.all(
-            color: _isHovered ? AirbnbTheme.gray300 : AirbnbTheme.gray200,
-            width: 1,
+            color: Theme.of(context).dividerColor,
+            width: widget.borderWidth,
           ),
           boxShadow: widget.showShadow
               ? (_isHovered ? AirbnbTheme.mediumShadow : AirbnbTheme.lightShadow)

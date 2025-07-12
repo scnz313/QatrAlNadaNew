@@ -1,32 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../theme/airbnb_theme.dart';
 
 class AirbnbDrawer extends StatelessWidget {
   final Function(String) onFontChanged;
   final String currentFont;
-  final VoidCallback onIncreaseFontSize;
-  final VoidCallback onDecreaseFontSize;
   final VoidCallback onAboutPressed;
   final VoidCallback onPrivacyPressed;
+  final Function(String)? onThemeChanged;
+  final String? currentTheme;
   final List<String> fontOptions;
+  final List<String> themeOptions;
   
   const AirbnbDrawer({
     Key? key,
     required this.onFontChanged,
     required this.currentFont,
-    required this.onIncreaseFontSize,
-    required this.onDecreaseFontSize,
     required this.onAboutPressed,
     required this.onPrivacyPressed,
+    this.onThemeChanged,
+    this.currentTheme,
     required this.fontOptions,
+    this.themeOptions = const ['Light', 'Dark', 'Sepia', 'Auto'],
   }) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Drawer(
-      backgroundColor: AirbnbTheme.surfaceWhite,
+      backgroundColor: theme.colorScheme.surface,
       child: SafeArea(
         child: Column(
           children: [
@@ -34,7 +36,7 @@ class AirbnbDrawer extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AirbnbTheme.gray100,
+                color: theme.colorScheme.surface,
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(AirbnbTheme.radiusXLarge),
                   bottomRight: Radius.circular(AirbnbTheme.radiusXLarge),
@@ -46,15 +48,15 @@ class AirbnbDrawer extends StatelessWidget {
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      color: AirbnbTheme.primaryRed,
+                      color: theme.colorScheme.primary,
                       shape: BoxShape.circle,
                       boxShadow: AirbnbTheme.mediumShadow,
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Icon(
                         Icons.menu_book_rounded,
                         size: 40,
-                        color: AirbnbTheme.primaryWhite,
+                        color: theme.colorScheme.onPrimary,
                       ),
                     ),
                   ).animate()
@@ -63,8 +65,9 @@ class AirbnbDrawer extends StatelessWidget {
                   const SizedBox(height: 16),
                   Text(
                     'شرح قطرالندى',
-                    style: AirbnbTheme.textTheme.headlineLarge?.copyWith(
+                    style: theme.textTheme.headlineLarge?.copyWith(
                       fontFamily: 'Noto',
+                      color: theme.colorScheme.onSurface,
                     ),
                     textDirection: TextDirection.rtl,
                   ).animate()
@@ -109,9 +112,9 @@ class AirbnbDrawer extends StatelessWidget {
                       .fadeIn(delay: 600.ms)
                       .slideX(begin: -0.1, end: 0),
                   
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                    child: Divider(color: AirbnbTheme.gray200),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                    child: Divider(color: theme.colorScheme.onSurface.withOpacity(0.2)),
                   ),
                   
                   // Font Selector
@@ -122,26 +125,28 @@ class AirbnbDrawer extends StatelessWidget {
                       children: [
                         Text(
                           'Font Style',
-                          style: AirbnbTheme.textTheme.labelLarge?.copyWith(
-                            color: AirbnbTheme.gray600,
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: theme.colorScheme.onSurface.withOpacity(0.7),
                           ),
                         ),
                         const SizedBox(height: 12),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                           decoration: BoxDecoration(
-                            border: Border.all(color: AirbnbTheme.gray300),
+                            border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.3)),
                             borderRadius: BorderRadius.circular(AirbnbTheme.radiusSmall),
                           ),
                           child: DropdownButton<String>(
                             value: currentFont,
                             isExpanded: true,
                             underline: const SizedBox(),
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.arrow_drop_down_rounded,
-                              color: AirbnbTheme.primaryDark,
+                              color: theme.colorScheme.onSurface,
                             ),
-                            style: AirbnbTheme.textTheme.bodyLarge,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: theme.colorScheme.onSurface,
+                            ),
                             onChanged: (String? newFont) {
                               if (newFont != null) {
                                 onFontChanged(newFont);
@@ -154,7 +159,7 @@ class AirbnbDrawer extends StatelessWidget {
                                   font,
                                   style: TextStyle(
                                     fontFamily: font,
-                                    color: AirbnbTheme.primaryDark,
+                                    color: theme.colorScheme.onSurface,
                                   ),
                                 ),
                               );
@@ -167,48 +172,78 @@ class AirbnbDrawer extends StatelessWidget {
                       .fadeIn(delay: 700.ms)
                       .slideX(begin: -0.1, end: 0),
                   
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                    child: Divider(color: AirbnbTheme.gray200),
-                  ),
-                  
-                  // Font Size Controls
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Text Size',
-                          style: AirbnbTheme.textTheme.labelLarge?.copyWith(
-                            color: AirbnbTheme.gray600,
+                    child: Divider(color: theme.colorScheme.onSurface.withOpacity(0.2)),
+                  ),
+                  
+                  // Theme Selector
+                  if (onThemeChanged != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Theme',
+                            style: theme.textTheme.labelLarge?.copyWith(
+                              color: theme.colorScheme.onSurface.withOpacity(0.7),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _FontSizeButton(
-                                icon: Icons.remove_rounded,
-                                label: 'Decrease',
-                                onTap: onDecreaseFontSize,
-                              ),
+                          const SizedBox(height: 12),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.3)),
+                              borderRadius: BorderRadius.circular(AirbnbTheme.radiusSmall),
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _FontSizeButton(
-                                icon: Icons.add_rounded,
-                                label: 'Increase',
-                                onTap: onIncreaseFontSize,
+                            child: DropdownButton<String>(
+                              value: currentTheme ?? 'Light',
+                              isExpanded: true,
+                              underline: const SizedBox(),
+                              icon: Icon(
+                                Icons.arrow_drop_down_rounded,
+                                color: theme.colorScheme.onSurface,
                               ),
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: theme.colorScheme.onSurface,
+                              ),
+                              onChanged: (String? newTheme) {
+                                if (newTheme != null) {
+                                  onThemeChanged!(newTheme);
+                                }
+                              },
+                              items: themeOptions.map<DropdownMenuItem<String>>((String themeOption) {
+                                return DropdownMenuItem<String>(
+                                  value: themeOption,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        themeOption == 'Light' ? Icons.light_mode_rounded :
+                                        themeOption == 'Dark' ? Icons.dark_mode_rounded :
+                                        themeOption == 'Sepia' ? Icons.filter_vintage_rounded :
+                                        Icons.brightness_auto_rounded,
+                                        size: 18,
+                                        color: theme.colorScheme.onSurface,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(themeOption),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ).animate()
-                      .fadeIn(delay: 800.ms)
-                      .slideX(begin: -0.1, end: 0),
+                          ),
+                        ],
+                      ),
+                    ).animate()
+                        .fadeIn(delay: 750.ms)
+                        .slideX(begin: -0.1, end: 0),
+                  
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                    child: Divider(color: theme.colorScheme.onSurface.withOpacity(0.2)),
+                  ),
                 ],
               ),
             ),
@@ -216,24 +251,24 @@ class AirbnbDrawer extends StatelessWidget {
             // Footer
             Container(
               padding: const EdgeInsets.all(24),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 border: Border(
-                  top: BorderSide(color: AirbnbTheme.gray200),
+                  top: BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.2)),
                 ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.favorite_rounded,
                     size: 16,
-                    color: AirbnbTheme.primaryRed,
+                    color: theme.colorScheme.primary,
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Made with love',
-                    style: AirbnbTheme.textTheme.bodySmall?.copyWith(
-                      color: AirbnbTheme.gray600,
+                    'Made with love in Kashmir',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
                     ),
                   ),
                 ],
@@ -260,6 +295,7 @@ class _DrawerItem extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AirbnbTheme.radiusSmall),
@@ -271,22 +307,23 @@ class _DrawerItem extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: AirbnbTheme.gray100,
+                color: theme.colorScheme.surface,
                 borderRadius: BorderRadius.circular(AirbnbTheme.radiusSmall),
               ),
               child: Center(
                 child: Icon(
                   icon,
                   size: 20,
-                  color: AirbnbTheme.primaryDark,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
             ),
             const SizedBox(width: 16),
             Text(
               title,
-              style: AirbnbTheme.textTheme.bodyLarge?.copyWith(
+              style: theme.textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w500,
+                color: theme.colorScheme.onSurface,
               ),
             ),
           ],
@@ -296,59 +333,3 @@ class _DrawerItem extends StatelessWidget {
   }
 }
 
-class _FontSizeButton extends StatefulWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-  
-  const _FontSizeButton({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-  
-  @override
-  State<_FontSizeButton> createState() => _FontSizeButtonState();
-}
-
-class _FontSizeButtonState extends State<_FontSizeButton> {
-  bool _isPressed = false;
-  
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) => setState(() => _isPressed = false),
-      onTapCancel: () => setState(() => _isPressed = false),
-      onTap: widget.onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        transform: Matrix4.identity()..scale(_isPressed ? 0.95 : 1.0),
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        decoration: BoxDecoration(
-          color: _isPressed ? AirbnbTheme.gray100 : AirbnbTheme.surfaceWhite,
-          border: Border.all(color: AirbnbTheme.gray300),
-          borderRadius: BorderRadius.circular(AirbnbTheme.radiusSmall),
-          boxShadow: _isPressed ? null : AirbnbTheme.lightShadow,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              widget.icon,
-              size: 20,
-              color: AirbnbTheme.primaryDark,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              widget.label,
-              style: AirbnbTheme.textTheme.labelMedium?.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

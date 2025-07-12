@@ -179,10 +179,16 @@ class AboutPage extends StatelessWidget {
 
   void _launchURL(String url) async {
     final Uri urlnew = Uri.parse(url);
-    if (await canLaunchUrl(urlnew)) {
-      await launchUrl(urlnew);
-    } else {
-      throw 'Could not launch $url';
+    try {
+      if (await canLaunchUrl(urlnew)) {
+        await launchUrl(urlnew);
+      } else {
+        // Handle gracefully without throwing
+        debugPrint('Could not launch $url');
+      }
+    } catch (e) {
+      // Handle gracefully without throwing
+      debugPrint('Error launching $url: $e');
     }
   }
 }

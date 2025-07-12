@@ -1,4 +1,4 @@
-package qtralnada.usman.app
+package com.qataralnada.app
 
 import io.flutter.embedding.android.FlutterActivity
 

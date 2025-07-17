@@ -6,7 +6,7 @@ description: |
   It also includes quick access to essential features like increasing or decreasing the font size and viewing a privacy policy. 
   Ideal for anyone seeking to learn more about classical Arabic literature in a convenient and accessible format.
 
-version: 2.0.1+6
+version: 2.1.0+7
 
 environment:
   sdk: ">=3.0.0 <4.0.0"

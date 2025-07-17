@@ -25,6 +25,12 @@ void main() {
 class AppState extends ChangeNotifier {
   String currentFont = 'Noto';
   String currentTheme = 'Light';
+  double fontSize = 18.0; // Default font size
+  
+  // Font size constraints
+  static const double minFontSize = 12.0;
+  static const double maxFontSize = 32.0;
+  static const double fontSizeStep = 2.0;
   
   void updateFont(String font) {
     currentFont = font;
@@ -33,6 +39,25 @@ class AppState extends ChangeNotifier {
   
   void updateTheme(String theme) {
     currentTheme = theme;
+    notifyListeners();
+  }
+  
+  void increaseFontSize() {
+    if (fontSize < maxFontSize) {
+      fontSize += fontSizeStep;
+      notifyListeners();
+    }
+  }
+  
+  void decreaseFontSize() {
+    if (fontSize > minFontSize) {
+      fontSize -= fontSizeStep;
+      notifyListeners();
+    }
+  }
+  
+  void resetFontSize() {
+    fontSize = 18.0;
     notifyListeners();
   }
 }
@@ -87,6 +112,7 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   List<dynamic> data = [];
+  List<dynamic> filteredData = [];
   int currentIndex = 0;
   final List<String> fontOptions = ['Noto', 'Noor', 'Amiri'];
   
@@ -94,8 +120,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late AnimationController _fabController;
   final PageController _swipeController = PageController(viewportFraction: 0.9);
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final TextEditingController _searchController = TextEditingController();
   
   bool isLoading = true;
+  String searchQuery = '';
   
   @override
   void initState() {
@@ -116,6 +144,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _pageController.dispose();
     _fabController.dispose();
     _swipeController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
   
@@ -123,9 +152,26 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     String jsonString = await rootBundle.loadString('assets/data.json');
     setState(() {
       data = json.decode(jsonString);
+      filteredData = data; // Initialize filtered data
       isLoading = false;
     });
     _pageController.forward();
+  }
+  
+  void _filterChapters(String query) {
+    setState(() {
+      searchQuery = query;
+      if (query.isEmpty) {
+        filteredData = data;
+      } else {
+        filteredData = data.where((chapter) {
+          final title = chapter['title']?.toString().toLowerCase() ?? '';
+          final content = chapter['content']?.toString().toLowerCase() ?? '';
+          final searchLower = query.toLowerCase();
+          return title.contains(searchLower) || content.contains(searchLower);
+        }).toList();
+      }
+    });
   }
   
 
@@ -256,6 +302,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         fontOptions: fontOptions,
       ),
       endDrawer: _buildChaptersDrawer(),
+      floatingActionButton: _buildFontFloatingMenu(),
     );
   }
   
@@ -402,7 +449,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   child: Text(
                                     data[index]['content'] ?? 'لا يوجد شئ',
                                     style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: appState.fontSize,
                                       color: theme.colorScheme.onSurface,
                                       height: 2,
                                       fontFamily: appState.currentFont,
@@ -482,86 +529,138 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       color: theme.colorScheme.onSurface,
                     ),
                   ),
+                  const SizedBox(height: 20),
+                  // Search Bar
+                  Container(
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(AirbnbTheme.radiusSmall),
+                      border: Border.all(
+                        color: theme.colorScheme.onSurface.withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: TextField(
+                      controller: _searchController,
+                      onChanged: _filterChapters,
+                      textDirection: TextDirection.rtl,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Search chapters...',
+                        hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurface.withOpacity(0.5),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.search_rounded,
+                          color: theme.colorScheme.onSurface.withOpacity(0.5),
+                          size: 20,
+                        ),
+                        suffixIcon: searchQuery.isNotEmpty
+                            ? IconButton(
+                                icon: Icon(
+                                  Icons.clear_rounded,
+                                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+                                  size: 20,
+                                ),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  _filterChapters('');
+                                },
+                              )
+                            : null,
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                    ),
+                  ).animate()
+                      .fadeIn(delay: 400.ms, duration: 300.ms)
+                      .slideY(begin: -0.1, end: 0),
                 ],
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                itemCount: data.length,
-                itemBuilder: (context, index) {
-                  final isSelected = index == currentIndex;
-                  return AnimationConfiguration.staggeredList(
-                    position: index,
-                    duration: const Duration(milliseconds: 375),
-                    child: SlideAnimation(
-                      horizontalOffset: 50.0,
-                      child: FadeInAnimation(
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? theme.colorScheme.primary.withOpacity(0.1)
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(
-                              AirbnbTheme.radiusSmall,
-                            ),
-                          ),
-                          child: ListTile(
-                            onTap: () => navigateToPage(index),
-                            leading: Container(
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? theme.colorScheme.primary
-                                    : theme.colorScheme.onSurface.withOpacity(0.2),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '${index + 1}',
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? theme.colorScheme.onPrimary
-                                        : theme.colorScheme.onSurface.withOpacity(0.7),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
+              child: filteredData.isEmpty && searchQuery.isNotEmpty
+                  ? _buildNoResultsState(theme)
+                  : ListView.builder(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      itemCount: filteredData.length,
+                      itemBuilder: (context, index) {
+                        final chapter = filteredData[index];
+                        final originalIndex = data.indexOf(chapter);
+                        final isSelected = originalIndex == currentIndex;
+                        
+                        return AnimationConfiguration.staggeredList(
+                          position: index,
+                          duration: const Duration(milliseconds: 375),
+                          child: SlideAnimation(
+                            horizontalOffset: 50.0,
+                            child: FadeInAnimation(
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? theme.colorScheme.primary.withOpacity(0.1)
+                                      : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(
+                                    AirbnbTheme.radiusSmall,
                                   ),
+                                ),
+                                child: ListTile(
+                                  onTap: () => navigateToPage(originalIndex),
+                                  leading: Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? theme.colorScheme.primary
+                                          : theme.colorScheme.onSurface.withOpacity(0.2),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        '${originalIndex + 1}',
+                                        style: TextStyle(
+                                          color: isSelected
+                                              ? theme.colorScheme.onPrimary
+                                              : theme.colorScheme.onSurface.withOpacity(0.7),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  title: _buildHighlightedText(
+                                    chapter['title'] ?? '',
+                                    searchQuery,
+                                    theme,
+                                    isSelected,
+                                  ),
+                                  subtitle: searchQuery.isNotEmpty && 
+                                           chapter['content']?.toString().toLowerCase().contains(searchQuery.toLowerCase()) == true
+                                      ? _buildContentPreview(chapter['content'] ?? '', searchQuery, theme)
+                                      : null,
+                                  trailing: isSelected
+                                      ? Icon(
+                                          Icons.arrow_forward_ios_rounded,
+                                          size: 16,
+                                          color: theme.colorScheme.primary,
+                                        )
+                                      : null,
                                 ),
                               ),
                             ),
-                            title: Text(
-                              data[index]['title'] ?? '',
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                fontFamily: 'Noto',
-                                color: isSelected
-                                    ? theme.colorScheme.primary
-                                    : theme.colorScheme.onSurface,
-                                fontWeight: isSelected
-                                    ? FontWeight.w600
-                                    : FontWeight.w400,
-                              ),
-                              textAlign: TextAlign.right,
-                              textDirection: TextDirection.rtl,
-                            ),
-                            trailing: isSelected
-                                ? Icon(
-                                    Icons.arrow_forward_ios_rounded,
-                                    size: 16,
-                                    color: theme.colorScheme.primary,
-                                  )
-                                : null,
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),
@@ -569,5 +668,173 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
   
+  Widget _buildFontFloatingMenu() {
+    final appState = Provider.of<AppState>(context);
+    final theme = Theme.of(context);
+    
+    return AirbnbFloatingMenu(
+      mainIcon: Icons.format_size_rounded,
+      items: [
+        AirbnbFloatingMenuItem(
+          icon: Icons.add_rounded,
+          label: 'Increase Size',
+          onTap: () => appState.increaseFontSize(),
+        ),
+        // AirbnbFloatingMenuItem(
+        //   icon: Icons.refresh_rounded,
+        //   label: 'Reset Size',
+        //   onTap: () => appState.resetFontSize(),
+        // ),
+        AirbnbFloatingMenuItem(
+          icon: Icons.remove_rounded,
+          label: 'Decrease Size',
+          onTap: () => appState.decreaseFontSize(),
+        ),
+      ],
+    ).animate()
+        .fadeIn(delay: 800.ms, duration: 600.ms)
+        .slideY(begin: 0.3, end: 0, curve: Curves.easeOutBack);
+  }
+  
+  Widget _buildNoResultsState(ThemeData theme) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.search_off_rounded,
+            size: 64,
+            color: theme.colorScheme.onSurface.withOpacity(0.3),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No chapters found',
+            style: theme.textTheme.headlineSmall?.copyWith(
+              color: theme.colorScheme.onSurface.withOpacity(0.6),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Try searching with different keywords',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurface.withOpacity(0.5),
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ).animate()
+          .fadeIn(duration: 400.ms)
+          .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0)),
+    );
+  }
+  
+  Widget _buildHighlightedText(String text, String query, ThemeData theme, bool isSelected) {
+    if (query.isEmpty) {
+      return Text(
+        text,
+        style: theme.textTheme.bodyLarge?.copyWith(
+          fontFamily: 'Noto',
+          color: isSelected
+              ? theme.colorScheme.primary
+              : theme.colorScheme.onSurface,
+          fontWeight: isSelected
+              ? FontWeight.w600
+              : FontWeight.w400,
+        ),
+        textAlign: TextAlign.right,
+        textDirection: TextDirection.rtl,
+      );
+    }
+    
+    final lowerText = text.toLowerCase();
+    final lowerQuery = query.toLowerCase();
+    final spans = <TextSpan>[];
+    
+    int start = 0;
+    int index = lowerText.indexOf(lowerQuery);
+    
+    while (index != -1) {
+      // Add text before match
+      if (index > start) {
+        spans.add(TextSpan(
+          text: text.substring(start, index),
+          style: theme.textTheme.bodyLarge?.copyWith(
+            fontFamily: 'Noto',
+            color: isSelected
+                ? theme.colorScheme.primary
+                : theme.colorScheme.onSurface,
+            fontWeight: isSelected
+                ? FontWeight.w600
+                : FontWeight.w400,
+          ),
+        ));
+      }
+      
+      // Add highlighted match
+      spans.add(TextSpan(
+        text: text.substring(index, index + query.length),
+        style: theme.textTheme.bodyLarge?.copyWith(
+          fontFamily: 'Noto',
+          color: theme.colorScheme.primary,
+          fontWeight: FontWeight.bold,
+          backgroundColor: theme.colorScheme.primary.withOpacity(0.2),
+        ),
+      ));
+      
+      start = index + query.length;
+      index = lowerText.indexOf(lowerQuery, start);
+    }
+    
+    // Add remaining text
+    if (start < text.length) {
+      spans.add(TextSpan(
+        text: text.substring(start),
+        style: theme.textTheme.bodyLarge?.copyWith(
+          fontFamily: 'Noto',
+          color: isSelected
+              ? theme.colorScheme.primary
+              : theme.colorScheme.onSurface,
+          fontWeight: isSelected
+              ? FontWeight.w600
+              : FontWeight.w400,
+        ),
+      ));
+    }
+    
+    return RichText(
+      text: TextSpan(children: spans),
+      textAlign: TextAlign.right,
+      textDirection: TextDirection.rtl,
+    );
+  }
+  
+  Widget _buildContentPreview(String content, String query, ThemeData theme) {
+    final lowerContent = content.toLowerCase();
+    final lowerQuery = query.toLowerCase();
+    final index = lowerContent.indexOf(lowerQuery);
+    
+    if (index == -1) return const SizedBox.shrink();
+    
+    // Get context around the match (50 characters before and after)
+    final start = (index - 50).clamp(0, content.length);
+    final end = (index + query.length + 50).clamp(0, content.length);
+    final preview = content.substring(start, end);
+    final adjustedQuery = query;
+    
+    return Container(
+      margin: const EdgeInsets.only(top: 4),
+      child: Text(
+        '...$preview...',
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onSurface.withOpacity(0.6),
+          fontFamily: 'Noto',
+        ),
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.right,
+        textDirection: TextDirection.rtl,
+      ),
+    );
+  }
 
 }

@@ -379,6 +379,8 @@ class _AirbnbFloatingMenuState extends State<AirbnbFloatingMenu>
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -409,15 +411,22 @@ class _AirbnbFloatingMenuState extends State<AirbnbFloatingMenu>
                               vertical: 8,
                             ),
                             decoration: BoxDecoration(
-                              color: AirbnbTheme.primaryDark,
+                              color: theme.colorScheme.onSurface,
                               borderRadius: BorderRadius.circular(
                                 AirbnbTheme.radiusSmall,
                               ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: theme.colorScheme.onSurface.withOpacity(0.2),
+                                  offset: const Offset(0, 2),
+                                  blurRadius: 4,
+                                ),
+                              ],
                             ),
                             child: Text(
                               item.label!,
-                              style: const TextStyle(
-                                color: AirbnbTheme.primaryWhite,
+                              style: TextStyle(
+                                color: theme.colorScheme.surface,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -433,14 +442,24 @@ class _AirbnbFloatingMenuState extends State<AirbnbFloatingMenu>
                             width: 48,
                             height: 48,
                             decoration: BoxDecoration(
-                              color: AirbnbTheme.surfaceWhite,
+                              color: theme.colorScheme.surface,
                               shape: BoxShape.circle,
-                              boxShadow: AirbnbTheme.mediumShadow,
+                              border: Border.all(
+                                color: theme.colorScheme.onSurface.withOpacity(0.1),
+                                width: 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: theme.colorScheme.onSurface.withOpacity(0.15),
+                                  offset: const Offset(0, 4),
+                                  blurRadius: 12,
+                                ),
+                              ],
                             ),
                             child: Icon(
                               item.icon,
                               size: 20,
-                              color: AirbnbTheme.primaryDark,
+                              color: theme.colorScheme.onSurface,
                             ),
                           ),
                         ),
@@ -459,16 +478,26 @@ class _AirbnbFloatingMenuState extends State<AirbnbFloatingMenu>
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: _isOpen ? AirbnbTheme.primaryDark : AirbnbTheme.primaryRed,
+              color: _isOpen 
+                  ? theme.colorScheme.onSurface 
+                  : theme.colorScheme.primary,
               shape: BoxShape.circle,
-              boxShadow: AirbnbTheme.heavyShadow,
+              boxShadow: [
+                BoxShadow(
+                  color: theme.colorScheme.onSurface.withOpacity(0.25),
+                  offset: const Offset(0, 8),
+                  blurRadius: 20,
+                ),
+              ],
             ),
             child: AnimatedRotation(
               duration: const Duration(milliseconds: 200),
               turns: _isOpen ? 0.125 : 0,
               child: Icon(
                 widget.mainIcon,
-                color: AirbnbTheme.primaryWhite,
+                color: _isOpen 
+                    ? theme.colorScheme.surface 
+                    : theme.colorScheme.onPrimary,
                 size: 24,
               ),
             ),

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - قطر الندى (Qatar Al Nada)</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+        .arabic-title {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        .last-updated {
+            text-align: center;
+            font-style: italic;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        .contact-info {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="arabic-title">قطر الندى</div>
+        <h1>Privacy Policy</h1>
+        <div class="last-updated">Last updated: June 14, 2025</div>
+
+        <div class="highlight">
+            <strong>Quick Summary:</strong> Qatar Al Nada app does not collect, store, or share any personal information. Your privacy is fully protected.
+        </div>
+
+        <h2>Introduction</h2>
+        <p>Welcome to Qatar Al Nada (قطر الندى). We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you about how we look after your personal data when you use our mobile application and tell you about your privacy rights and how the law protects you.</p>
+
+        <h2>Information We Collect</h2>
+        <p><strong>We do not collect any personal information.</strong> Our app is designed to work completely offline and does not require:</p>
+        <ul>
+            <li>User registration or account creation</li>
+            <li>Personal identification information</li>
+            <li>Location data</li>
+            <li>Contact information</li>
+            <li>Device identifiers</li>
+            <li>Usage analytics or tracking</li>
+        </ul>
+
+        <h2>Data Storage</h2>
+        <p>The app stores only the following data locally on your device:</p>
+        <ul>
+            <li><strong>User Preferences:</strong> Font size settings, theme preferences (light/dark/sepia mode)</li>
+            <li><strong>App Content:</strong> Classical Arabic texts and educational content (stored locally)</li>
+        </ul>
+        <p>This data never leaves your device and is not transmitted to our servers or any third parties.</p>
+
+        <h2>Third-Party Services</h2>
+        <p>Our app may contain links to external websites (such as developer portfolios). These external sites have their own privacy policies. We are not responsible for the privacy practices of these external sites.</p>
+
+        <h2>Permissions</h2>
+        <p>The app requests minimal permissions:</p>
+        <ul>
+            <li><strong>Internet Permission:</strong> Only used for opening external links (developer contact information). No data is transmitted.</li>
+        </ul>
+
+        <h2>Children's Privacy</h2>
+        <p>Our app is safe for users of all ages, including children under 13. Since we do not collect any personal information, there are no special considerations needed for children's privacy.</p>
+
+        <h2>Data Security</h2>
+        <p>Since we do not collect or transmit any personal data, there are no data security risks associated with using our app. All content is stored locally on your device.</p>
+
+        <h2>Changes to This Privacy Policy</h2>
+        <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date.</p>
+
+        <h2>Your Rights</h2>
+        <p>Since we do not collect personal data, there is no personal data to access, rectify, or delete. However, you can:</p>
+        <ul>
+            <li>Uninstall the app at any time to remove all locally stored preferences</li>
+            <li>Reset app settings within the app to clear preferences</li>
+        </ul>
+
+        <h2>Contact Us</h2>
+        <div class="contact-info">
+            <p>If you have any questions about this Privacy Policy, please contact us:</p>
+            <ul>
+                <li><strong>App Name:</strong> Qatar Al Nada (قطر الندى)</li>
+                <li><strong>Developer:</strong> Mohammad Usman Bhat</li>
+                <li><strong>Email:</strong> usmanbhat@example.com</li>
+                <li><strong>GitHub:</strong> <a href="https://github.com/Usman-bhat">https://github.com/Usman-bhat</a></li>
+            </ul>
+            <p><strong>Contributor:</strong> Hashim Hameem</p>
+            <ul>
+                <li><strong>GitHub:</strong> <a href="https://github.com/HASHIM-HAMEEM">https://github.com/HASHIM-HAMEEM</a></li>
+            </ul>
+        </div>
+
+        <h2>Compliance</h2>
+        <p>This privacy policy complies with:</p>
+        <ul>
+            <li>Google Play Store requirements</li>
+            <li>GDPR (General Data Protection Regulation)</li>
+            <li>COPPA (Children's Online Privacy Protection Act)</li>
+            <li>CCPA (California Consumer Privacy Act)</li>
+        </ul>
+
+        <p style="text-align: center; margin-top: 40px; color: #7f8c8d; font-size: 14px;">
+            © 2025 Qatar Al Nada. All rights reserved.
+        </p>
+    </div>
+</body>
+</html>
